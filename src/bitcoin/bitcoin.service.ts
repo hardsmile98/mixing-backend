@@ -95,7 +95,7 @@ export class BitcoinService implements OnModuleInit {
         message,
       );
 
-      return signature;
+      return { signature, letterAddress };
     } catch (e) {
       return null;
     }

@@ -6,33 +6,51 @@ import { BitcoinService } from 'src/bitcoin/bitcoin.service';
 export class LettersService {
   constructor(private bitcoinService: BitcoinService) {}
 
+  getAddressesForMessage(addresses: Array<any>) {
+    return addresses
+      .map((item) => `${item.percent}% to ${item.address}`)
+      .join(', ');
+  }
+
   async getLetter(query: GetLetterQueryDto) {
     // get order data
     const addresses = [
       {
         address: 'uerjwenrwjeriwerrwjerniwerijew',
-        percent: 100,
+        percent: 65,
+      },
+      {
+        address: '2rewrweiririu3n2u423i422i4u23',
+        percent: 35,
       },
     ];
 
-    const mixCode = '1ewH3gr';
+    const transferAddress = 'tkjir22meiqw34ertereiriorw3';
 
-    const message = `message`;
+    const message = `We confirm that we have generated the address ${transferAddress} in order to transfer incoming amount (minus fee) to the following addresses: ${this.getAddressesForMessage(
+      addresses,
+    )}. This email is digitally signed by our main account, please do not share it with others. Thank you for using our service`;
 
-    const signature = await this.bitcoinService.signMessage(message);
+    const { signature, letterAddress } = await this.bitcoinService.signMessage(
+      message,
+    );
 
     const file = `
-===== HEAD =====
+===== START HEAD =====
 Date: ${new Date().toISOString()}
-===== HEAD =====
+===== END HEAD =====
+
+===== START SIGNING BITCOIN ADDRESS =====
+${letterAddress}
+===== END SIGNING BITCOIN ADDRESS =====
     
-=====MESSAGE =====
+===== START MESSAGE =====
 ${message}
-===== MESSAGE =====
+===== END MESSAGE =====
     
-===== SIGNATURE =====
+===== START SIGNATURE =====
 ${signature}
-===== SIGNATURE =====
+===== END SIGNATURE =====
 `;
 
     return file;
