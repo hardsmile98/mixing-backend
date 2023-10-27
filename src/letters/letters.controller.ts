@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Header, Post, Query } from '@nestjs/common';
 import { LettersService } from './letters.service';
 import { CheckLetterDto, GetLetterQueryDto } from './dto';
 
@@ -6,6 +6,8 @@ import { CheckLetterDto, GetLetterQueryDto } from './dto';
 export class LettersController {
   constructor(private lettersService: LettersService) {}
 
+  @Header('Content-type', 'application/octet-stream')
+  @Header('Content-disposition', 'attachment; filename=letter.txt')
   @Get('/')
   getLetter(@Query() query: GetLetterQueryDto) {
     return this.lettersService.getLetter(query);

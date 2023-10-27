@@ -7,13 +7,40 @@ export class LettersService {
   constructor(private bitcoinService: BitcoinService) {}
 
   async getLetter(query: GetLetterQueryDto) {
-    return this.bitcoinService.verifyMessage(
-      'message',
-      'INJKeGD3iCnA5somNJATWB0GTskGQG+uFFKoSu3kzqksAcEHu9EX3jfUNr9Z4gv3Zd/ECc6N4qgfqOAEVAXd/mc=',
-    );
+    // get order data
+    const addresses = [
+      {
+        address: 'uerjwenrwjeriwerrwjerniwerijew',
+        percent: 100,
+      },
+    ];
+
+    const mixCode = '1ewH3gr';
+
+    const message = `message`;
+
+    const signature = await this.bitcoinService.signMessage(message);
+
+    const file = `
+===== HEAD =====
+Date: ${new Date().toISOString()}
+===== HEAD =====
+    
+=====MESSAGE =====
+${message}
+===== MESSAGE =====
+    
+===== SIGNATURE =====
+${signature}
+===== SIGNATURE =====
+`;
+
+    return file;
   }
 
   async checkLetter(dto: CheckLetterDto) {
-    return {};
+    const { message, signature } = dto;
+
+    return await this.bitcoinService.verifyMessage(message, signature);
   }
 }
