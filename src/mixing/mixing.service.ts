@@ -1,17 +1,20 @@
 import { Injectable } from '@nestjs/common';
-import { CreateOrderDto } from './dto';
+import { CreateOrderDto, OrderQueryDto } from './dto';
+import { BitcoinService } from 'src/bitcoin/bitcoin.service';
 
 @Injectable()
 export class MixingService {
+  constructor(private bitcoinService: BitcoinService) {}
+
   async createOrder(dto: CreateOrderDto) {
     return {};
   }
 
-  async getOrder(dto: CreateOrderDto) {
+  async getOrder(query: OrderQueryDto) {
     return {};
   }
 
-  async checkOrder(dto: CreateOrderDto) {
+  async checkOrder(query: OrderQueryDto) {
     return {};
   }
 }

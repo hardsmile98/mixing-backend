@@ -1,6 +1,6 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { MixingService } from './mixing.service';
-import { CreateOrderDto } from './dto';
+import { CreateOrderDto, OrderQueryDto } from './dto';
 
 @Controller('mixing')
 export class MixingController {
@@ -11,13 +11,13 @@ export class MixingController {
     return this.mixingService.createOrder(dto);
   }
 
-  @Get('/:id')
-  getOrder(@Body() dto: CreateOrderDto) {
-    return this.mixingService.getOrder(dto);
+  @Get('/')
+  getOrder(@Query() query: OrderQueryDto) {
+    return this.mixingService.getOrder(query);
   }
 
-  @Get('/check/:id')
-  checkOrder(@Body() dto: CreateOrderDto) {
-    return this.mixingService.checkOrder(dto);
+  @Get('/check')
+  checkOrder(@Query() query: OrderQueryDto) {
+    return this.mixingService.checkOrder(query);
   }
 }
