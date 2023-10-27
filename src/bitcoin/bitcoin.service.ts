@@ -4,7 +4,7 @@ const Client = require('bitcoin-core');
 
 @Injectable()
 export class BitcoinService {
-  client = null;
+  mainClient = null;
 
   constructor(private readonly configService: ConfigService) {
     const network = this.configService.get<string>('BITCOIN_NETWORK');
@@ -12,19 +12,21 @@ export class BitcoinService {
     const port = this.configService.get<number>('BITCOIN_PORT');
     const username = this.configService.get<string>('BITCOIN_USERNAME');
     const password = this.configService.get<string>('BITCOIN_PASSWORD');
+    const wallet = this.configService.get<string>('BITCOIN_MAIN_WALLET');
 
-    this.client = new Client({
+    this.mainClient = new Client({
       network,
       host,
       port,
       username,
       password,
+      wallet,
     });
   }
 
   async encypt() {
     try {
-      const info = await this.client.listWallets();
+      const info = await this.mainClient.listWallets();
       return { info };
     } catch (e) {
       console.log(e);
