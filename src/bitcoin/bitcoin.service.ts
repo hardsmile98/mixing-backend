@@ -5,7 +5,6 @@ const Client = require('bitcoin-core');
 @Injectable()
 export class BitcoinService implements OnModuleInit {
   mainClient = null;
-  letterLabel = 'letter';
 
   config = {
     network: this.configService.get<string>('BITCOIN_NETWORK'),
@@ -16,6 +15,7 @@ export class BitcoinService implements OnModuleInit {
   };
 
   wallet = this.configService.get<string>('BITCOIN_MAIN_WALLET');
+  letterLabel = this.configService.get<string>('LETTER_ADDRESS_LABEL');
 
   constructor(private readonly configService: ConfigService) {
     this.mainClient = new Client({
@@ -85,8 +85,39 @@ export class BitcoinService implements OnModuleInit {
   async signMessage(message: string) {
     const letterAddress = await this.getLetterAddress();
 
-    const signature = await this.mainClient.signMessage(letterAddress, message);
+    if (!letterAddress) {
+      throw new Error('Letter address is not exist');
+    }
 
-    return signature;
+    try {
+      const signature = await this.mainClient.signMessage(
+        letterAddress,
+        message,
+      );
+
+      return signature;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  async verifyMessage(message: string, signature: string) {
+    const letterAddress = await this.getLetterAddress();
+
+    if (!letterAddress) {
+      throw new Error('Letter address is not exist');
+    }
+
+    try {
+      const virifyAnswer = await this.mainClient.verifyMessage(
+        letterAddress,
+        signature,
+        message,
+      );
+
+      return virifyAnswer;
+    } catch (e) {
+      return false;
+    }
   }
 }
