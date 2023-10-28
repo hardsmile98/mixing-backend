@@ -1,6 +1,15 @@
-import { Body, Controller, Get, Header, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Header,
+  Post,
+  Query,
+  UseFilters,
+} from '@nestjs/common';
 import { LettersService } from './letters.service';
 import { CheckLetterDto, GetLetterQueryDto } from './dto';
+import { FileExceptionFilter } from './filters';
 
 @Controller('letters')
 export class LettersController {
@@ -9,6 +18,7 @@ export class LettersController {
   @Header('Content-type', 'application/octet-stream')
   @Header('Content-disposition', 'attachment; filename=letter.txt')
   @Get('/')
+  @UseFilters(FileExceptionFilter)
   getLetter(@Query() query: GetLetterQueryDto) {
     return this.lettersService.getLetter(query);
   }
