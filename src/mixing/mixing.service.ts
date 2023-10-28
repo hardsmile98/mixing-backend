@@ -30,7 +30,7 @@ export class MixingService {
         transferAddress,
       };
 
-      await this.prismaService.order.create({
+      const createdOrder = await this.prismaService.order.create({
         data: {
           ...order,
           recipientAddresses: {
@@ -45,6 +45,7 @@ export class MixingService {
         order: {
           ...order,
           recipientAddresses: dto.addresses,
+          status: createdOrder.status,
         },
         success: true,
       };
@@ -72,6 +73,7 @@ export class MixingService {
           feePercent: order.feePercent,
           transferAddress: order.transferAddress,
           recipientAddresses: order.recipientAddresses,
+          status: order.status,
         },
         success: true,
       };
