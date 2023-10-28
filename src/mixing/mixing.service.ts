@@ -42,7 +42,10 @@ export class MixingService {
       });
 
       return {
-        order,
+        order: {
+          ...order,
+          recipientAddresses: dto.addresses,
+        },
         success: true,
       };
     } catch (e) {
@@ -54,10 +57,50 @@ export class MixingService {
   }
 
   async getOrder(query: OrderQueryDto) {
-    return {};
+    try {
+      const order = await this.prismaService.order.findUnique({
+        where: { uuid: query.uuid },
+        include: {
+          recipientAddresses: true,
+        },
+      });
+
+      return {
+        order: {
+          uuid: order.uuid,
+          mixCode: order.mixCode,
+          feePercent: order.feePercent,
+          transferAddress: order.transferAddress,
+          recipientAddresses: order.recipientAddresses,
+        },
+        success: true,
+      };
+    } catch (e) {
+      return {
+        message: e,
+        success: false,
+      };
+    }
   }
 
   async checkOrder(query: OrderQueryDto) {
-    return {};
+    try {
+      const order = await this.prismaService.order.findUnique({
+        where: { uuid: query.uuid },
+        include: {
+          recipientAddresses: true,
+        },
+      });
+
+      return {
+        status: order.status,
+        success: true,
+      };
+    } catch (e) {
+      return {
+        message: e,
+        success: false,
+      };
+    }
   }
 }
