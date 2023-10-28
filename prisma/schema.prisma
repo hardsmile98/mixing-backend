@@ -11,15 +11,19 @@ enum Currency {
   BTC
 }
 
+enum Status {
+  awaiting
+  mixing
+  done
+}
+
 model RecipientAddresses {
   uuid      String   @id @default(uuid())
   address   String
   delay     Int
-  percent   Int
+  percent   Float
   Order     Order?   @relation(fields: [orderUuid], references: [uuid])
   orderUuid String?
-  isSent    Boolean  @default(false)
-  updatedAt DateTime @updatedAt
   createdAt DateTime @default(now())
 }
 
@@ -27,9 +31,9 @@ model Order {
   uuid               String               @id @default(uuid())
   transferAddress    String
   recipientAddresses RecipientAddresses[]
-  feePercent         Int
+  feePercent         Float
   mixCode            String
-  isDone             Boolean              @default(false)
+  status             Status               @default(awaiting)
   currency           Currency             @default(BTC)
   updatedAt          DateTime             @updatedAt
   createdAt          DateTime             @default(now())

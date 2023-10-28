@@ -59,6 +59,14 @@ ${signature}
   async checkLetter(dto: CheckLetterDto) {
     const { message, signature } = dto;
 
-    return await this.bitcoinService.verifyMessage(message, signature);
+    const isVeified = await this.bitcoinService.verifyMessage(
+      message,
+      signature,
+    );
+
+    return {
+      isVeified,
+      success: true,
+    };
   }
 }

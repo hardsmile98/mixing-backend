@@ -1,8 +1,8 @@
-import { Optional } from '@nestjs/common';
 import { Type } from 'class-transformer';
 import {
   IsArray,
   IsNotEmpty,
+  IsOptional,
   Max,
   MaxLength,
   Min,
@@ -37,6 +37,6 @@ export class CreateOrderDto {
   @Max(10)
   feePercent: number;
 
-  @Optional()
+  @IsOptional()
   mixCode?: string;
 }
