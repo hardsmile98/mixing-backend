@@ -12,97 +12,84 @@ export class MixingService {
   ) {}
 
   async createOrder(dto: CreateOrderDto) {
-    try {
-      const orderUuid = uuid();
+    const orderUuid = uuid();
 
-      const transferAddress = await this.bitcoinService.getMainWalletNewAddress(
-        orderUuid,
-      );
+    const transferAddress = await this.bitcoinService.getMainWalletNewAddress(
+      orderUuid,
+    );
 
-      if (!transferAddress) {
-        throw new BadRequestException('Failed to create transfer addresses');
-      }
+    if (!transferAddress) {
+      throw new BadRequestException('Failed to create transfer addresses');
+    }
 
-      const order = {
-        uuid: orderUuid,
-        mixCode: dto.mixCode ? dto.mixCode : uuid(),
-        feePercent: dto.feePercent,
-        transferAddress,
-      };
+    const order = {
+      uuid: orderUuid,
+      mixCode: dto.mixCode ? dto.mixCode : uuid(),
+      feePercent: dto.feePercent,
+      transferAddress,
+    };
 
-      const createdOrder = await this.prismaService.order.create({
-        data: {
-          ...order,
-          recipientAddresses: {
-            createMany: {
-              data: dto.addresses,
-            },
+    const createdOrder = await this.prismaService.order.create({
+      data: {
+        ...order,
+        recipientAddresses: {
+          createMany: {
+            data: dto.addresses,
           },
         },
-      });
+      },
+    });
 
-      return {
-        order: {
-          ...order,
-          recipientAddresses: dto.addresses,
-          status: createdOrder.status,
-        },
-        success: true,
-      };
-    } catch (e) {
-      return {
-        message: e,
-        success: false,
-      };
-    }
+    return {
+      order: {
+        ...order,
+        recipientAddresses: dto.addresses,
+        status: createdOrder.status,
+      },
+      success: true,
+    };
   }
 
   async getOrder(query: OrderQueryDto) {
-    try {
-      const order = await this.prismaService.order.findUnique({
-        where: { uuid: query.uuid },
-        include: {
-          recipientAddresses: true,
-        },
-      });
+    const order = await this.prismaService.order.findUnique({
+      where: { uuid: query.uuid },
+      include: {
+        recipientAddresses: true,
+      },
+    });
 
-      return {
-        order: {
-          uuid: order.uuid,
-          mixCode: order.mixCode,
-          feePercent: order.feePercent,
-          transferAddress: order.transferAddress,
-          recipientAddresses: order.recipientAddresses,
-          status: order.status,
-        },
-        success: true,
-      };
-    } catch (e) {
-      return {
-        message: e,
-        success: false,
-      };
+    if (!order) {
+      throw new BadRequestException('Order is not found');
     }
+
+    return {
+      order: {
+        uuid: order.uuid,
+        mixCode: order.mixCode,
+        feePercent: order.feePercent,
+        transferAddress: order.transferAddress,
+        recipientAddresses: order.recipientAddresses,
+        status: order.status,
+      },
+      success: true,
+    };
   }
 
   async checkOrder(query: OrderQueryDto) {
-    try {
-      const order = await this.prismaService.order.findUnique({
-        where: { uuid: query.uuid },
-        include: {
-          recipientAddresses: true,
-        },
-      });
+    const order = await this.prismaService.order.findUnique({
+      where: { uuid: query.uuid },
+      include: {
+        recipientAddresses: true,
+      },
+    });
 
-      return {
-        status: order.status,
-        success: true,
-      };
-    } catch (e) {
-      return {
-        message: e,
-        success: false,
-      };
+    if (!order) {
+      throw new BadRequestException('Order is not found');
     }
+
+    return {
+      status: order.status,
+      success: true,
+    };
   }
 }
