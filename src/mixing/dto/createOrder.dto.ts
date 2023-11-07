@@ -12,8 +12,8 @@ import {
 
 class Address {
   @IsNotEmpty()
-  @MinLength(25)
-  @MaxLength(34)
+  @MinLength(20)
+  @MaxLength(50)
   address: string;
 
   @IsNotEmpty()
