@@ -14,7 +14,9 @@ async function bootstrap() {
       whitelist: true,
     }),
   );
+
   app.setGlobalPrefix('api');
+
   app.enableCors({
     origin: URL_CLIENT,
     methods: '*',
